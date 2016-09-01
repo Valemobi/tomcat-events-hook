@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tomcat-events-hook" basedir="." default="jar">
+
+	<property name="bindir" location="bin"/>
+	<property name="original.dir" location="."/>
+	<property name="lib" location="lib/"/>
+	<property name="build" location="build"/>
+	<property name="src" location="build/src"/>
+	
+	<path id="dist.classpath">
+		<pathelement path="${build}"/>
+		<fileset dir="${lib}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}"/>
+		<delete dir="${src}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${src}"/>
+		<copy todir="${src}">
+			<fileset dir="${original.dir}/src/"/>
+		</copy>
+	</target>
+
+	<target name="compile" depends="init" description="compile the source">
+		<javac srcdir="${src}" destdir="${build}" classpathref="dist.classpath" source="1.6" target="1.6" debug="on" encoding="ISO-8859-1"/>
+	</target>
+	
+	<target name="jar" depends="compile" description="create the jar">
+		<delete dir="${src}"/>
+		<fileset dir="${lib}" id="lib.dist.fileset">
+			<include name="**/*.jar"/>
+		</fileset>
+		<!-- Put everything in ${build} into a jar file -->
+		<jar jarfile="${ant.project.name}.jar">
+			<fileset dir="${build}" includes="**/*" excludes="**/src"/>
+			<manifest>
+				<!-- SET YOUR MAIN CLASS HERE (there is no Main-Class)-->
+				<attribute name="Class-Path" value=". ${dist.classpath}"/>
+			</manifest>
+		</jar>
+	</target>
+</project>
