@@ -1,0 +1,43 @@
+group 'valemobi.infra'
+version System.properties.getProperty('version', '0.0.0') + "-SNAPSHOT"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-catalina
+    compile "org.apache.tomcat:tomcat-catalina:7.0.84"
+}
+
+publishing {
+    repositories {
+        maven {
+            url "https://newbeta-nexus.valebroker.com.br/repository/beta-maven/"
+            credentials {
+                username = System.properties.getProperty('username', 'anonymous')
+                password = System.properties.getProperty('password', 'anonymous')
+            }
+        }
+    }
+
+    publications {
+        mavenApplication(MavenPublication) {
+            groupId "valemobi.infra"
+            artifactId "tomcat-events-hook"
+            version = System.properties.getProperty('version', '0.0.0')
+            from components.java
+        }
+    }
+}
